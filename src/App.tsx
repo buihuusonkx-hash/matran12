@@ -237,28 +237,28 @@ export default function App() {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-12">STT</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-16">Số tiết</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 min-w-[250px]">Nội dung kiến thức, đơn vị kiến thức</th>
-                <th colSpan={8} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2">Số câu hỏi theo mức độ nhận thức</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20">Tổng số câu</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20">Tỷ lệ (%)</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-24">Thao tác</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-12 font-bold">STT</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-16 font-bold uppercase">Số tiết</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 min-w-[250px] font-bold uppercase text-[11px]">Nội dung kiến thức, đơn vị kiến thức</th>
+                <th colSpan={8} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 font-bold uppercase text-[11px]">Số câu hỏi theo mức độ nhận thức</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tổng số câu</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tỷ lệ (%)</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-24 font-bold uppercase text-[11px]">Thao tác</th>
               </tr>
               <tr>
-                <th colSpan={2} className="border border-[#cbd5e1] bg-[#f0fdf4] p-2">Trắc nghiệm nhiều phương án</th>
-                <th colSpan={3} className="border border-[#cbd5e1] bg-[#fefce8] p-2">Trắc nghiệm đúng/sai</th>
-                <th colSpan={3} className="border border-[#cbd5e1] bg-[#fff1f2] p-2">Trắc nghiệm trả lời ngắn</th>
+                <th colSpan={2} className="border border-[#cbd5e1] bg-[#f0fdf4] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN</th>
+                <th colSpan={3} className="border border-[#cbd5e1] bg-[#fefce8] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM ĐÚNG/SAI</th>
+                <th colSpan={3} className="border border-[#cbd5e1] bg-[#fff1f2] p-2 font-bold uppercase text-[11px]">TRẢ LỜI NGẮN</th>
               </tr>
               <tr>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-normal text-[11px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-normal text-[11px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-normal text-[11px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-normal text-[11px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-normal text-[11px]">VD</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-normal text-[11px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-normal text-[11px]">VD</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-normal text-[11px]">VDC</th>
+                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[10px]">NB</th>
+                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[10px]">TH</th>
+                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[10px]">NB</th>
+                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[10px]">TH</th>
+                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[10px]">VD</th>
+                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[10px]">TH</th>
+                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[10px]">VD</th>
+                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[10px]">VDC</th>
               </tr>
             </thead>
             <tbody>
