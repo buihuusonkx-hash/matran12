@@ -20,75 +20,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MatrixData, MatrixGroup, MatrixItem } from './types';
 
 const INITIAL_DATA: MatrixData = {
-  groups: [
-    {
-      id: '1',
-      name: 'ỨNG DỤNG ĐẠO HÀM ĐỂ KHẢO SÁT VÀ VẼ ĐỒ THỊ CỦA HÀM SỐ',
-      items: [
-        {
-          id: '1-1',
-          name: 'Tính đơn điệu và cực trị của hàm số',
-          mc_recognition: 2, mc_understanding: 1,
-          tf_recognition: 1, tf_understanding: 1, tf_application: 0,
-          sa_understanding: 0, sa_application: 1, sa_advanced: 0
-        },
-        {
-          id: '1-2',
-          name: 'Giá trị lớn nhất và giá trị nhỏ nhất của hàm số',
-          mc_recognition: 1, mc_understanding: 1,
-          tf_recognition: 0, tf_understanding: 1, tf_application: 0,
-          sa_understanding: 1, sa_application: 0, sa_advanced: 0
-        },
-        {
-          id: '1-3',
-          name: 'Khảo sát và vẽ đồ thị hàm số',
-          mc_recognition: 1, mc_understanding: 1,
-          tf_recognition: 0, tf_understanding: 0, tf_application: 1,
-          sa_understanding: 0, sa_application: 0, sa_advanced: 1
-        }
-      ]
-    },
-    {
-      id: '2',
-      name: 'VECTƠ VÀ HỆ TỌA ĐỘ TRONG KHÔNG GIAN',
-      items: [
-        {
-          id: '2-1',
-          name: 'Vectơ trong không gian',
-          mc_recognition: 1, mc_understanding: 1,
-          tf_recognition: 1, tf_understanding: 0, tf_application: 0,
-          sa_understanding: 0, sa_application: 0, sa_advanced: 0
-        },
-        {
-          id: '2-2',
-          name: 'Tọa độ của vectơ trong không gian',
-          mc_recognition: 2, mc_understanding: 1,
-          tf_recognition: 0, tf_understanding: 1, tf_application: 0,
-          sa_understanding: 1, sa_application: 0, sa_advanced: 0
-        }
-      ]
-    },
-    {
-      id: '3',
-      name: 'NGUYÊN HÀM VÀ TÍCH PHÂN',
-      items: [
-        {
-          id: '3-1',
-          name: 'Nguyên hàm',
-          mc_recognition: 2, mc_understanding: 1,
-          tf_recognition: 1, tf_understanding: 0, tf_application: 0,
-          sa_understanding: 0, sa_application: 0, sa_advanced: 0
-        },
-        {
-          id: '3-2',
-          name: 'Tích phân',
-          mc_recognition: 1, mc_understanding: 1,
-          tf_recognition: 0, tf_understanding: 1, tf_application: 0,
-          sa_understanding: 1, sa_application: 1, sa_advanced: 0
-        }
-      ]
-    }
-  ]
+  groups: []
 };
 
 export default function App() {
@@ -103,6 +35,7 @@ export default function App() {
     let mc_rec = 0, mc_und = 0;
     let tf_rec = 0, tf_und = 0, tf_app = 0;
     let sa_und = 0, sa_app = 0, sa_adv = 0;
+    let totalPeriods = 0;
 
     data.groups.forEach(g => {
       g.items.forEach(i => {
@@ -114,22 +47,18 @@ export default function App() {
         sa_und += i.sa_understanding;
         sa_app += i.sa_application;
         sa_adv += i.sa_advanced;
+        totalPeriods += i.periods;
       });
     });
 
     const totalQuestions = mc_rec + mc_und + tf_rec + tf_und + tf_app + sa_und + sa_app + sa_adv;
     
-    // Points calculation (example logic)
-    // Part I: 12 questions * 0.25 = 3.0
-    // Part II: 4 questions (each 4 sub-questions) -> complex scoring
-    // Part III: 6 questions * 0.5 = 3.0
-    // For simplicity, let's just show counts and percentages based on a standard 10pt scale
-    
     return {
       mc_rec, mc_und,
       tf_rec, tf_und, tf_app,
       sa_und, sa_app, sa_adv,
-      totalQuestions
+      totalQuestions,
+      totalPeriods
     };
   }, [data]);
 
@@ -178,6 +107,7 @@ export default function App() {
     const newItem: MatrixItem = {
       id: Math.random().toString(36).substr(2, 9),
       name,
+      periods: 1,
       mc_recognition: 0, mc_understanding: 0,
       tf_recognition: 0, tf_understanding: 0, tf_application: 0,
       sa_understanding: 0, sa_application: 0, sa_advanced: 0
@@ -187,6 +117,70 @@ export default function App() {
       groups: prev.groups.map(g => g.id === groupId ? { ...g, items: [...g.items, newItem] } : g)
     }));
     setIsAddingItem(null);
+  };
+
+  const handleAutoDistribute = () => {
+    if (totals.totalPeriods === 0) {
+      alert('Vui lòng nhập số tiết cho các bài học!');
+      return;
+    }
+
+    // Standard distribution totals
+    const distribution = {
+      mc_rec: 8, mc_und: 4,
+      tf_rec: 1, tf_und: 2, tf_app: 1,
+      sa_und: 2, sa_app: 3, sa_adv: 1
+    };
+
+    const newData = { ...data };
+    
+    // Distribute proportionally
+    newData.groups = newData.groups.map(group => ({
+      ...group,
+      items: group.items.map(item => {
+        const ratio = item.periods / totals.totalPeriods;
+        return {
+          ...item,
+          mc_recognition: Math.round(ratio * distribution.mc_rec),
+          mc_understanding: Math.round(ratio * distribution.mc_und),
+          tf_recognition: Math.round(ratio * distribution.tf_rec),
+          tf_understanding: Math.round(ratio * distribution.tf_und),
+          tf_application: Math.round(ratio * distribution.tf_app),
+          sa_understanding: Math.round(ratio * distribution.sa_und),
+          sa_application: Math.round(ratio * distribution.sa_app),
+          sa_advanced: Math.round(ratio * distribution.sa_adv)
+        };
+      })
+    }));
+
+    // Adjust for rounding errors (ensure totals match exactly)
+    const checkAndAdjust = (field: keyof MatrixItem, target: number) => {
+      let currentTotal = 0;
+      newData.groups.forEach(g => g.items.forEach(i => currentTotal += (i[field] as number)));
+      
+      if (currentTotal !== target && newData.groups.length > 0) {
+        // Find the item with most periods to adjust
+        let bestItem: {gIdx: number, iIdx: number, periods: number} | null = null;
+        newData.groups.forEach((g, gIdx) => g.items.forEach((i, iIdx) => {
+          if (!bestItem || i.periods > bestItem.periods) {
+            bestItem = {gIdx, iIdx, periods: i.periods};
+          }
+        }));
+
+        if (bestItem) {
+          const {gIdx, iIdx} = bestItem;
+          const val = newData.groups[gIdx].items[iIdx][field] as number;
+          (newData.groups[gIdx].items[iIdx][field] as any) = val + (target - currentTotal);
+        }
+      }
+    };
+
+    Object.entries(distribution).forEach(([field, target]) => {
+      checkAndAdjust(field as keyof MatrixItem, target);
+    });
+
+    setData(newData);
+    alert('Đã tự động phân bổ câu hỏi dựa trên số tiết!');
   };
 
   return (
@@ -213,7 +207,23 @@ export default function App() {
             >
               <PlusCircle size={18} /> Thêm Chương
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white rounded-lg font-semibold text-sm transition-colors">
+            <button 
+              onClick={() => {
+                if (data.groups.length > 0) {
+                  setIsAddingItem(data.groups[data.groups.length - 1].id);
+                } else {
+                  alert('Vui lòng thêm chương trước khi thêm bài!');
+                  setIsAddingGroup(true);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-[#8b5cf6] hover:bg-[#7c3aed] text-white rounded-lg font-semibold text-sm transition-colors"
+            >
+              <Plus size={18} /> Thêm Bài Mới
+            </button>
+            <button 
+              onClick={handleAutoDistribute}
+              className="flex items-center gap-2 px-4 py-2 bg-[#10b981] hover:bg-[#059669] text-white rounded-lg font-semibold text-sm transition-colors"
+            >
               <RefreshCw size={18} /> Tự Động Phân Bổ
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-lg font-semibold text-sm transition-colors">
@@ -228,6 +238,7 @@ export default function App() {
             <thead>
               <tr>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-12">STT</th>
+                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-16">Số tiết</th>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 min-w-[250px]">Nội dung kiến thức, đơn vị kiến thức</th>
                 <th colSpan={8} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2">Số câu hỏi theo mức độ nhận thức</th>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20">Tổng số câu</th>
@@ -251,11 +262,31 @@ export default function App() {
               </tr>
             </thead>
             <tbody>
-              {data.groups.map((group, gIdx) => (
+              {data.groups.length === 0 ? (
+                <tr>
+                  <td colSpan={14} className="p-20 text-center text-[#94a3b8]">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="p-4 bg-[#f1f5f9] rounded-full text-[#cbd5e1]">
+                        <PlusCircle size={48} />
+                      </div>
+                      <p className="text-lg font-medium text-[#64748b]">Chưa có dữ liệu ma trận</p>
+                      <button 
+                        onClick={() => setIsAddingGroup(true)}
+                        className="px-6 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-lg font-semibold transition-colors shadow-sm"
+                      >
+                         Bắt đầu bằng cách thêm chương mới
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : data.groups.map((group, gIdx) => (
                 <React.Fragment key={group.id}>
                   {/* Group Header */}
                   <tr className="bg-[#f8fafc] font-bold">
                     <td className="border border-[#cbd5e1] p-2 text-center">{gIdx + 1}</td>
+                    <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">
+                      {group.items.reduce((acc, i) => acc + i.periods, 0)}
+                    </td>
                     <td className="border border-[#cbd5e1] p-2 text-left uppercase text-[#0369a1]">
                       {group.name}
                     </td>
@@ -270,10 +301,10 @@ export default function App() {
                       <div className="flex justify-center gap-2">
                         <button 
                           onClick={() => setIsAddingItem(group.id)}
-                          className="p-1 text-[#8b5cf6] hover:bg-[#f5f3ff] rounded transition-colors"
-                          title="Thêm mục con"
+                          className="flex items-center gap-1 px-2 py-1 text-xs bg-[#f5f3ff] text-[#8b5cf6] hover:bg-[#ede9fe] rounded transition-colors font-semibold"
+                          title="Thêm bài mới"
                         >
-                          <Plus size={16} />
+                          <Plus size={14} /> Thêm bài mới
                         </button>
                         <button 
                           onClick={() => setEditingGroup(group)}
@@ -298,6 +329,15 @@ export default function App() {
                     return (
                       <tr key={item.id} className="hover:bg-[#f1f5f9] transition-colors">
                         <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">{gIdx + 1}.{iIdx + 1}</td>
+                        <td className="border border-[#cbd5e1] p-1 bg-white">
+                          <input 
+                            type="number" 
+                            min="1"
+                            value={item.periods}
+                            onChange={(e) => handleUpdateItem(group.id, item.id, 'periods', parseInt(e.target.value) || 1)}
+                            className="w-full bg-transparent text-center focus:outline-none font-medium"
+                          />
+                        </td>
                         <td className="border border-[#cbd5e1] p-2 text-left pl-6 font-medium">
                           {item.name}
                         </td>
@@ -406,7 +446,9 @@ export default function App() {
             </tbody>
             <tfoot>
               <tr className="bg-[#f1f5f9] font-bold text-[#0f172a]">
-                <td colSpan={2} className="border border-[#cbd5e1] p-3 text-right uppercase">Tổng cộng</td>
+                <td className="border border-[#cbd5e1] p-2"></td>
+                <td className="border border-[#cbd5e1] p-2 text-center bg-[#e0f2fe]">{totals.totalPeriods}</td>
+                <td className="border border-[#cbd5e1] p-3 text-right uppercase">Tổng cộng</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_rec}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_und}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_rec}</td>

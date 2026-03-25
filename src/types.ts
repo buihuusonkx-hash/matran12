@@ -14,6 +14,7 @@ export enum CognitiveLevel {
 export interface MatrixItem {
   id: string;
   name: string;
+  periods: number;
   // Part I: Multiple Choice (Recognition, Understanding)
   mc_recognition: number;
   mc_understanding: number;
