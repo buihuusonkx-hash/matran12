@@ -438,26 +438,26 @@ export default function App() {
         {/* Summary Info */}
         <div className="p-6 bg-[#f8fafc] border-t border-[#cbd5e1]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-4 rounded-lg border border-[#cbd5e1] shadow-sm">
-              <h3 className="font-bold text-[#0369a1] mb-2 flex items-center gap-2">
+            <div className="bg-white p-4 rounded-lg border border-[#cbd5e1] shadow-sm text-center">
+              <h3 className="font-bold text-[#0369a1] mb-2 flex items-center justify-center gap-2 uppercase text-xs">
                 <div className="w-2 h-2 rounded-full bg-[#10b981]"></div>
-                Phần I: Trắc nghiệm 4 lựa chọn
+                Phần I: Trắc nghiệm nhiều phương án
               </h3>
-              <p className="text-sm text-[#64748b]">Số câu: <span className="font-bold text-[#1e293b]">{totals.mc_rec + totals.mc_und}</span></p>
-              <p className="text-sm text-[#64748b]">Điểm: <span className="font-bold text-[#1e293b]">{((totals.mc_rec + totals.mc_und) * 0.25).toFixed(2)}</span></p>
+              <p className="text-sm text-[#64748b]">Số câu: <span className="font-bold text-[#1e293b]">{totals.mc_rec + totals.mc_und + totals.mc_app}</span></p>
+              <p className="text-sm text-[#64748b]">Điểm: <span className="font-bold text-[#1e293b]">{((totals.mc_rec + totals.mc_und + totals.mc_app) * 0.25).toFixed(2)}</span></p>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-[#cbd5e1] shadow-sm">
-              <h3 className="font-bold text-[#0369a1] mb-2 flex items-center gap-2">
+            <div className="bg-white p-4 rounded-lg border border-[#cbd5e1] shadow-sm text-center">
+              <h3 className="font-bold text-[#0369a1] mb-2 flex items-center justify-center gap-2 uppercase text-xs">
                 <div className="w-2 h-2 rounded-full bg-[#f59e0b]"></div>
-                Phần II: Trắc nghiệm Đúng/Sai
+                Phần II: Trắc nghiệm đúng/sai
               </h3>
               <p className="text-sm text-[#64748b]">Số câu: <span className="font-bold text-[#1e293b]">{totals.tf_rec + totals.tf_und + totals.tf_app}</span></p>
-              <p className="text-sm text-[#64748b]">Điểm: <span className="font-bold text-[#1e293b]">4.00</span> (Mỗi câu 1đ)</p>
+              <p className="text-sm text-[#64748b]">Điểm: <span className="font-bold text-[#1e293b]">4.00</span></p>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-[#cbd5e1] shadow-sm">
-              <h3 className="font-bold text-[#0369a1] mb-2 flex items-center gap-2">
+            <div className="bg-white p-4 rounded-lg border border-[#cbd5e1] shadow-sm text-center">
+              <h3 className="font-bold text-[#0369a1] mb-2 flex items-center justify-center gap-2 uppercase text-xs">
                 <div className="w-2 h-2 rounded-full bg-[#ef4444]"></div>
-                Phần III: Trắc nghiệm trả lời ngắn
+                Phần III: Trả lời ngắn
               </h3>
               <p className="text-sm text-[#64748b]">Số câu: <span className="font-bold text-[#1e293b]">{totals.sa_und + totals.sa_app + totals.sa_adv}</span></p>
               <p className="text-sm text-[#64748b]">Điểm: <span className="font-bold text-[#1e293b]">{((totals.sa_und + totals.sa_app + totals.sa_adv) * 0.5).toFixed(2)}</span></p>
