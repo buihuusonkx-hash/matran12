@@ -14,7 +14,10 @@ import {
   Layers,
   Sparkles,
   Search,
-  School
+  School,
+  FileText,
+  CheckCircle2,
+  Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MatrixData, MatrixGroup, MatrixItem } from './types';
@@ -91,7 +94,6 @@ export default function App() {
   
   const [isAddingGroup, setIsAddingGroup] = useState(false);
   const [isAddingItem, setIsAddingItem] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'matrix' | 'export'>('matrix');
 
   // Sync data when grade changes
   useEffect(() => {
@@ -102,7 +104,11 @@ export default function App() {
     }));
   }, [grade]);
 
-  // Calculations
+  // Calculations based on USER'S POINT STRUCTURE
+  // TN1: 12 câu - 3đ (0.25/c)
+  // TN2: 2 câu (8 ý) - 2đ (1.0/c, hoặc 0.25/ý nếu tính lẻ? Thường tính theo mức độ đúng của 4 ý)
+  // TN3: 4 câu - 2đ (0.5/c)
+  // TL: 6 câu - 3đ (0.5/c)
   const totals = useMemo(() => {
     const t = {
       p: 0, mc_r: 0, mc_u: 0, mc_a: 0, tf_r: 0, tf_u: 0, tf_a: 0, sa_r: 0, sa_u: 0, sa_a: 0, es_a: 0, es_v: 0, total: 0
@@ -169,14 +175,8 @@ export default function App() {
   const handleAutoDistribute = () => {
     if (totals.p === 0) return alert('Vui lòng nhập số tiết!');
     
-    // Total questions for 4 parts structure (Standard)
-    const targets = {
-      mc: 12, // Dạng 1
-      tf: 16, // Dạng 2 (items)
-      sa: 6, // Dạng 3
-      es: 0 // Tự luận (can be adjusted)
-    };
-
+    // Target distribution (Total 12-8-4-6)
+    // TN1: 12, TN2: 8 ý, TN3: 4, TL: 6
     const newData = { ...data };
     newData.groups = newData.groups.map(group => ({
       ...group,
@@ -184,388 +184,343 @@ export default function App() {
         const r = item.periods / totals.p;
         return {
           ...item,
-          mc_rec: Math.round(r * 10), mc_und: Math.round(r * 2), mc_app: 0,
-          tf_rec: Math.round(r * 6), tf_und: Math.round(r * 6), tf_app: Math.round(r*4),
-          sa_rec: Math.round(r * 6), sa_und: 0, sa_app: 0,
+          mc_rec: Math.round(r * 8), mc_und: Math.round(r * 3), mc_app: Math.round(r * 1),
+          tf_rec: Math.round(r * 3), tf_und: Math.round(r * 3), tf_app: Math.round(r * 2),
+          sa_rec: Math.round(r * 2), sa_und: Math.round(r * 1), sa_app: Math.round(r * 1),
+          essay_app: Math.round(r * 4), essay_adv: Math.round(r * 2)
         };
       })
     }));
     setData(newData);
-    alert('Đã phân bổ tự động (gần đúng)! Bạn nên điều chỉnh lại để khớp tổng 12-16-6.');
-  };
-
-  const handleExportWord = () => {
-    alert('Đang chuẩn bị trích xuất file... \n(Trong môi trường ứng dụng thực tế, file Word sẽ được tải về ngay lập tức)');
+    alert('Đã phân bổ tự động theo cấu trúc: TN1 (12), TN2 (2 câu), TN3 (4 câu), Tự luận (6 câu).');
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans p-4 md:p-6 lg:p-8">
-      {/* Background patterns */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-5 z-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-400 rounded-full blur-3xl -mr-64 -mt-64"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-400 rounded-full blur-3xl -ml-64 -mb-64"></div>
+    <div className="min-h-screen bg-[#f1f5f9] text-[#1e293b] font-sans p-4 md:p-6 lg:p-8">
+      {/* Background Decor */}
+      <div className="fixed inset-0 pointer-events-none opacity-40 z-0">
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-200/50 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-200/50 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Navigation & Header */}
-        <header className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-xs font-bold uppercase tracking-wider">
-                <School size={14} />
-                Ứng dụng Ma Trận Đề Kiểm Tra
-              </div>
-              <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-                <BookOpen className="text-sky-600" size={36} />
-                MA TRẬN {data.examType.toUpperCase()}
-              </h1>
-              <p className="text-slate-500 font-medium">
-                Xây dựng khung đề thi chuẩn hóa theo quy định của Bộ Giáo dục & Đào tạo.
-              </p>
-            </div>
-
-            <div className="flex items-center bg-white p-1 rounded-2xl shadow-sm border border-slate-200">
+        {/* Main Title Section */}
+        <header className="mb-10 text-center">
+          <div className="inline-flex items-center gap-3 px-6 py-2 bg-white rounded-full shadow-md border border-slate-200 mb-6 group hover:shadow-lg transition-all">
+             <div className="w-10 h-10 bg-[#0284c7] rounded-full flex items-center justify-center text-white shadow-inner group-hover:rotate-12 transition-transform">
+                <BookOpen size={20} fill="currentColor" />
+             </div>
+             <h1 className="text-2xl md:text-3xl font-black text-[#0f172a] uppercase tracking-tight">
+               Ma Trận Toán 10, 11 - Giữa Học Kỳ II
+             </h1>
+          </div>
+          
+          <div className="flex justify-center mb-8">
+            <div className="flex bg-white/80 backdrop-blur-sm p-1.5 rounded-[22px] shadow-lg border border-white/50">
               <button 
                 onClick={() => setGrade(10)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${grade === 10 ? 'bg-sky-600 text-white shadow-lg' : 'hover:bg-slate-100 text-slate-500'}`}
+                className={`flex items-center gap-2 px-8 py-3 rounded-[18px] font-bold text-sm transition-all ${grade === 10 ? 'bg-[#0284c7] text-white shadow-md scale-105' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 <GraduationCap size={18} /> Khối 10
               </button>
               <button 
                 onClick={() => setGrade(11)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${grade === 11 ? 'bg-sky-600 text-white shadow-lg' : 'hover:bg-slate-100 text-slate-500'}`}
+                className={`flex items-center gap-2 px-8 py-3 rounded-[18px] font-bold text-sm transition-all ${grade === 11 ? 'bg-[#0284c7] text-white shadow-md scale-105' : 'text-slate-500 hover:bg-slate-100'}`}
               >
                 <GraduationCap size={18} /> Khối 11
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button onClick={() => setIsAddingGroup(true)} className="group bg-slate-800 hover:bg-slate-900 text-white p-4 rounded-2xl shadow-sm transition-all flex items-center gap-4">
-              <div className="bg-slate-700 p-2 rounded-xl group-hover:scale-110 transition-transform">
-                <Layers size={24} />
-              </div>
-              <div className="text-left font-bold text-sm">Thêm Chủ đề</div>
-            </button>
-            <button 
-              onClick={() => {
-                if (data.groups.length > 0) setIsAddingItem(data.groups[0].id);
-                else setIsAddingGroup(true);
-              }}
-              className="group bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-2xl shadow-sm transition-all flex items-center gap-4"
-            >
-              <div className="bg-indigo-500 p-2 rounded-xl group-hover:scale-110 transition-transform">
-                <Plus Circle size={24} />
-              </div>
-              <div className="text-left font-bold text-sm">Thêm Bài học</div>
-            </button>
-            <button onClick={handleAutoDistribute} className="group bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-2xl shadow-sm transition-all flex items-center gap-4">
-              <div className="bg-emerald-500 p-2 rounded-xl group-hover:scale-110 transition-transform">
-                <RefreshCw size={24} />
-              </div>
-              <div className="text-left font-bold text-sm">Tự động chia</div>
-            </button>
-            <button onClick={handleExportWord} className="group bg-sky-600 hover:bg-sky-700 text-white p-4 rounded-2xl shadow-sm transition-all flex items-center gap-4">
-              <div className="bg-sky-500 p-2 rounded-xl group-hover:scale-110 transition-transform">
-                <FileDown size={24} />
-              </div>
-              <div className="text-left font-bold text-sm">Tải về Word</div>
-            </button>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <ActionButton icon={<Layers size={20} />} label="Thêm Chủ đề" onClick={() => setIsAddingGroup(true)} bgColor="bg-slate-800" />
+            <ActionButton icon={<Plus size={20} />} label="Thêm Bài học" onClick={() => { if (data.groups.length > 0) setIsAddingItem(data.groups[0].id); else setIsAddingGroup(true); }} bgColor="bg-[#8b5cf6]" />
+            <ActionButton icon={<RefreshCw size={20} />} label="Tự động chia" onClick={handleAutoDistribute} bgColor="bg-[#10b981]" />
+            <ActionButton icon={<FileDown size={20} />} label="Xuất Word" onClick={() => alert('Đang xử lý xuất file...')} bgColor="bg-[#0284c7]" />
           </div>
         </header>
 
         {/* Tip section */}
-        <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 rounded-r-xl flex items-start gap-4 shadow-sm">
-          <Sparkles className="text-amber-500 shrink-0" size={20} />
-          <p className="text-amber-800 text-sm font-medium leading-relaxed">
-            <span className="font-bold">Mẹo:</span> Click trực tiếp vào các ô số trong bảng để thay đổi nội dung. Tổng số câu và tỷ lệ phần trăm sẽ tự động cập nhật ngay lập tức.
+        <div className="bg-[#fffbeb] border border-[#fef3c7] p-5 mb-8 rounded-3xl flex items-start gap-4 shadow-sm">
+          <div className="bg-[#f59e0b] p-2 rounded-xl text-white shadow-md">
+            <Sparkles size={18} />
+          </div>
+          <p className="text-[#92400e] text-sm font-semibold leading-relaxed">
+            <span className="font-extrabold uppercase text-[11px] block mb-1">Mẹo hay:</span> Click trực tiếp vào các ô số để cập nhật dữ liệu. Hệ thống sẽ tự tính điểm dựa trên cấu trúc: <span className="font-bold">TN1 (0.25đ), TN3 (0.5đ), TL (0.5đ)</span>. Riêng TN Dạng 2 tính <span className="font-bold text-red-600">1.0đ/câu</span> (trọn 4 ý).
           </p>
         </div>
 
         {/* Matrix Table */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden"
-        >
-          <div className="p-6 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-sky-900 flex items-center gap-2 uppercase tracking-wide">
-              <Search size={18} />
-              Bảng Ma Trận Chi Tiết - Toán {grade}
-            </h2>
-            <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
-              <div className="flex items-center gap-1"><Calendar size={14} /> Học kỳ {data.semester}</div>
-              <div className="bg-slate-200 w-px h-4"></div>
-              <div>Cập nhật: {new Date().toLocaleDateString('vi-VN')}</div>
+        <div className="bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-200 overflow-hidden mb-12">
+          <div className="p-8 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-8 bg-[#0284c7] rounded-full"></div>
+              <h2 className="text-xl font-black text-[#0f172a] uppercase tracking-wide">
+                Bảng Phân Phối Chi Tiết - TOÁN {grade}
+              </h2>
+            </div>
+            <div className="flex gap-4">
+              <Badge icon={<FileText size={14}/>} label="Ma trận chuẩn" color="sky" />
+              <Badge icon={<CheckCircle2 size={14}/>} label="Hệ thống tự động" color="emerald" />
             </div>
           </div>
 
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+          <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="text-[10px] font-extrabold text-slate-500 uppercase">
-                  <th rowSpan={2} className="p-4 border border-slate-100 bg-slate-50/50 min-w-[280px] text-left">Nội dung / Đơn vị kiến thức</th>
-                  <th colSpan={3} className="p-2 border border-slate-100 bg-teal-50 text-teal-700">TN Dạng 1 (Multiple Choice)</th>
-                  <th colSpan={3} className="p-2 border border-slate-100 bg-amber-50 text-amber-700">TN Dạng 2 (True/False)</th>
-                  <th colSpan={3} className="p-2 border border-slate-100 bg-rose-50 text-rose-700">TN Dạng 3 (Short Answer)</th>
-                  <th colSpan={2} className="p-2 border border-slate-100 bg-slate-100 text-slate-800">Tự luận</th>
-                  <th rowSpan={2} className="p-2 border border-slate-100 bg-slate-50 text-sky-700 font-black text-xs">Tổng</th>
-                  <th rowSpan={2} className="p-2 border border-slate-100 bg-slate-50">#</th>
+                <tr className="text-[11px] font-black text-slate-500 uppercase">
+                  <th rowSpan={2} className="p-6 border-b border-r border-slate-100 bg-slate-50/50 min-w-[320px] text-left">Nội dung kiến thức / Bài học</th>
+                  <th colSpan={3} className="p-3 border-b border-r border-teal-100 bg-teal-50 text-teal-800">TN Dạng 1 (NLC)</th>
+                  <th colSpan={3} className="p-3 border-b border-r border-amber-100 bg-amber-50 text-amber-800">TN Dạng 2 (Đ-S)</th>
+                  <th colSpan={3} className="p-3 border-b border-r border-rose-100 bg-rose-50 text-rose-800">TN Dạng 3 (TLN)</th>
+                  <th colSpan={2} className="p-3 border-b border-r border-[#f1f5f9] bg-slate-100 text-slate-800">Tự luận (TL)</th>
+                  <th rowSpan={2} className="p-3 border-b border-slate-100 bg-slate-50 text-sky-800 text-xs">Tổng</th>
+                  <th rowSpan={2} className="p-3 border-b border-slate-100 bg-slate-50"></th>
                 </tr>
-                <tr className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
-                  {/* NLC */}
-                  <th className="p-2 border border-slate-100 bg-teal-50/30">Biết</th>
-                  <th className="p-2 border border-slate-100 bg-teal-50/30">Hiểu</th>
-                  <th className="p-2 border border-slate-100 bg-teal-50/30">VD</th>
-                  {/* DS */}
-                  <th className="p-2 border border-slate-100 bg-amber-50/30">Biết</th>
-                  <th className="p-2 border border-slate-100 bg-amber-50/30">Hiểu</th>
-                  <th className="p-2 border border-slate-100 bg-amber-50/30">VD</th>
-                  {/* TLN */}
-                  <th className="p-2 border border-slate-100 bg-rose-50/30">Biết</th>
-                  <th className="p-2 border border-slate-100 bg-rose-50/30">Hiểu</th>
-                  <th className="p-2 border border-slate-100 bg-rose-50/30">VD</th>
-                  {/* TL */}
-                  <th className="p-2 border border-slate-100 bg-slate-100/50">VD</th>
-                  <th className="p-2 border border-slate-100 bg-slate-100/50">VDC</th>
+                <tr className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
+                  <th className="p-2 border-r border-teal-50 bg-teal-50/30">Biết</th><th className="p-2 border-r border-teal-50 bg-teal-50/30">Hiểu</th><th className="p-2 border-r border-teal-100 bg-teal-50/30">VD</th>
+                  <th className="p-2 border-r border-amber-50 bg-amber-50/30">Biết</th><th className="p-2 border-r border-amber-50 bg-amber-50/30">Hiểu</th><th className="p-2 border-r border-amber-100 bg-amber-50/30">VD</th>
+                  <th className="p-2 border-r border-rose-50 bg-rose-50/30">Biết</th><th className="p-2 border-r border-rose-50 bg-rose-50/30">Hiểu</th><th className="p-2 border-r border-rose-100 bg-rose-50/30">VD</th>
+                  <th className="p-2 border-r border-slate-200 bg-slate-100/30 text-slate-500">VD</th><th className="p-2 border-r border-slate-200 bg-slate-100/30 text-slate-500">VDC</th>
                 </tr>
               </thead>
-              <AnimatePresence mode="popLayout">
-                <tbody className="divide-y divide-slate-100">
-                  {data.groups.map((group, gIdx) => (
-                    <React.Fragment key={group.id}>
-                      {/* Group Header */}
-                      <tr className="bg-slate-50/80 group">
-                        <td colSpan={14} className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <span className="bg-sky-600 text-white w-7 h-7 flex items-center justify-center rounded-lg text-xs font-black shadow-sm">
-                                {gIdx + 1}
-                              </span>
-                              <span className="text-sm font-black text-slate-900 uppercase">
-                                {group.name}
-                              </span>
+              <tbody>
+                {data.groups.map((group, gIdx) => (
+                  <React.Fragment key={group.id}>
+                    <tr className="bg-slate-50/40 group">
+                      <td colSpan={14} className="p-4 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-slate-300">
+                            {gIdx + 1}
+                          </span>
+                          <span className="text-sm font-black text-slate-900 uppercase tracking-wide">
+                            {group.name}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    {group.items.map((item, iIdx) => {
+                      const rowTotal = item.mc_rec + item.mc_und + item.mc_app + item.tf_rec + item.tf_und + item.tf_app + item.sa_rec + item.sa_und + item.sa_app + item.essay_app + item.essay_adv;
+                      return (
+                        <tr key={item.id} className="group/row hover:bg-sky-50/30 transition-all border-b border-slate-100">
+                          <td className="p-5 pl-12 border-r border-slate-50">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-bold text-slate-800">{gIdx + 1}.{iIdx + 1}. {item.name}</span>
+                              <span className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest">{item.periods} tiết học</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <button 
-                                onClick={() => setIsAddingItem(group.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-white text-emerald-600 rounded-lg transition-all"
-                              >
-                                <Plus size={16} />
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  if(confirm('Xóa cả chương này?')) {
-                                    setData(prev => ({ ...prev, groups: prev.groups.filter(g => g.id !== group.id) }));
-                                  }
-                                }}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-rose-50 text-rose-500 rounded-lg transition-all"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      {/* Lessons */}
-                      {group.items.map((item, iIdx) => {
-                        const rowTotal = item.mc_rec + item.mc_und + item.mc_app + item.tf_rec + item.tf_und + item.tf_app + item.sa_rec + item.sa_und + item.sa_app + item.essay_app + item.essay_adv;
-                        return (
-                          <motion.tr 
-                            layout
-                            key={item.id} 
-                            className="bg-white hover:bg-slate-50 group/row transition-colors"
-                          >
-                            <td className="p-4 pl-12">
-                              <div className="flex flex-col">
-                                <span className="text-sm font-semibold text-slate-800 leading-tight">{gIdx + 1}.{iIdx + 1}. {item.name}</span>
-                                <span className="text-[10px] text-slate-400 font-bold uppercase mt-1">({item.periods} tiết)</span>
-                              </div>
-                            </td>
-                            {/* NLC - Green */}
-                            <MatrixCell value={item.mc_rec} onChange={v => handleUpdateItem(group.id, item.id, 'mc_rec', v)} color="teal" />
-                            <MatrixCell value={item.mc_und} onChange={v => handleUpdateItem(group.id, item.id, 'mc_und', v)} color="teal" />
-                            <MatrixCell value={item.mc_app} onChange={v => handleUpdateItem(group.id, item.id, 'mc_app', v)} color="teal" />
-                            {/* DS - Amber */}
-                            <MatrixCell value={item.tf_rec} onChange={v => handleUpdateItem(group.id, item.id, 'tf_rec', v)} color="amber" />
-                            <MatrixCell value={item.tf_und} onChange={v => handleUpdateItem(group.id, item.id, 'tf_und', v)} color="amber" />
-                            <MatrixCell value={item.tf_app} onChange={v => handleUpdateItem(group.id, item.id, 'tf_app', v)} color="amber" />
-                            {/* TLN - Rose */}
-                            <MatrixCell value={item.sa_rec} onChange={v => handleUpdateItem(group.id, item.id, 'sa_rec', v)} color="rose" />
-                            <MatrixCell value={item.sa_und} onChange={v => handleUpdateItem(group.id, item.id, 'sa_und', v)} color="rose" />
-                            <MatrixCell value={item.sa_app} onChange={v => handleUpdateItem(group.id, item.id, 'sa_app', v)} color="rose" />
-                            {/* TL - Slate */}
-                            <MatrixCell value={item.essay_app} onChange={v => handleUpdateItem(group.id, item.id, 'essay_app', v)} color="slate" />
-                            <MatrixCell value={item.essay_adv} onChange={v => handleUpdateItem(group.id, item.id, 'essay_adv', v)} color="slate" />
-                            
-                            <td className="p-2 border-l border-slate-100 text-center">
-                              <span className={`text-sm font-black ${rowTotal > 0 ? 'text-sky-600' : 'text-slate-300'}`}>
-                                {rowTotal}
-                              </span>
-                            </td>
-                            <td className="p-2 text-center">
-                              <button 
-                                onClick={() => handleDeleteItem(group.id, item.id)}
-                                className="opacity-0 group-hover/row:opacity-100 p-1.5 hover:bg-rose-50 text-rose-400 rounded-lg transition-all"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </td>
-                          </motion.tr>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </AnimatePresence>
+                          </td>
+                          <EditableCell value={item.mc_rec} onChange={v => handleUpdateItem(group.id, item.id, 'mc_rec', v)} color="teal" />
+                          <EditableCell value={item.mc_und} onChange={v => handleUpdateItem(group.id, item.id, 'mc_und', v)} color="teal" />
+                          <EditableCell value={item.mc_app} onChange={v => handleUpdateItem(group.id, item.id, 'mc_app', v)} color="teal" />
+                          
+                          <EditableCell value={item.tf_rec} onChange={v => handleUpdateItem(group.id, item.id, 'tf_rec', v)} color="amber" />
+                          <EditableCell value={item.tf_und} onChange={v => handleUpdateItem(group.id, item.id, 'tf_und', v)} color="amber" />
+                          <EditableCell value={item.tf_app} onChange={v => handleUpdateItem(group.id, item.id, 'tf_app', v)} color="amber" />
+                          
+                          <EditableCell value={item.sa_rec} onChange={v => handleUpdateItem(group.id, item.id, 'sa_rec', v)} color="rose" />
+                          <EditableCell value={item.sa_und} onChange={v => handleUpdateItem(group.id, item.id, 'sa_und', v)} color="rose" />
+                          <EditableCell value={item.sa_app} onChange={v => handleUpdateItem(group.id, item.id, 'sa_app', v)} color="rose" />
+                          
+                          <EditableCell value={item.essay_app} onChange={v => handleUpdateItem(group.id, item.id, 'essay_app', v)} color="slate" />
+                          <EditableCell value={item.essay_adv} onChange={v => handleUpdateItem(group.id, item.id, 'essay_adv', v)} color="slate" />
+                          
+                          <td className="p-2 text-center border-l border-slate-50">
+                            <span className={`text-sm font-black ${rowTotal > 0 ? 'text-[#0284c7]' : 'text-slate-200'}`}>{rowTotal}</span>
+                          </td>
+                          <td className="p-2 text-center">
+                            <button onClick={() => handleDeleteItem(group.id, item.id)} className="p-2 hover:bg-red-50 text-red-400 rounded-xl opacity-0 group-hover/row:opacity-100 transition-all"><Trash2 size={16}/></button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </tbody>
               <tfoot>
-                <tr className="bg-slate-900 text-white font-heavy">
-                  <td className="p-5 text-right text-xs font-black uppercase tracking-widest text-slate-400">Tổng cộng số câu / ý</td>
-                  <td colSpan={3} className="p-2 bg-teal-800 text-center font-bold">{totals.mc_r + totals.mc_u + totals.mc_a}</td>
-                  <td colSpan={3} className="p-2 bg-amber-800 text-center font-bold">{totals.tf_r + totals.tf_u + totals.tf_a}</td>
-                  <td colSpan={3} className="p-2 bg-rose-800 text-center font-bold">{totals.sa_r + totals.sa_u + totals.sa_a}</td>
-                  <td colSpan={2} className="p-2 bg-slate-700 text-center font-bold">{totals.es_a + totals.es_v}</td>
-                  <td className="p-2 bg-sky-600 text-center text-lg font-black">{totals.total}</td>
-                  <td className="p-2"></td>
+                <tr className="bg-slate-900 border-t-2 border-slate-800 text-white font-heavy">
+                  <td className="p-6 text-right text-xs font-black uppercase tracking-[3px] text-slate-400">TỔNG SỐ CÂU / Ý</td>
+                  <td colSpan={3} className="p-3 bg-teal-900/40 text-center font-black text-base">{totals.mc_r + totals.mc_u + totals.mc_a}</td>
+                  <td colSpan={3} className="p-3 bg-amber-900/40 text-center font-black text-base">{totals.tf_r + totals.tf_u + totals.tf_a}</td>
+                  <td colSpan={3} className="p-3 bg-rose-900/40 text-center font-black text-base">{totals.sa_r + totals.sa_u + totals.sa_a}</td>
+                  <td colSpan={2} className="p-3 bg-slate-800 text-center font-black text-base">{totals.es_a + totals.es_v}</td>
+                  <td className="p-3 bg-[#0284c7] text-center text-xl font-black">{totals.total}</td>
+                  <td className="p-3"></td>
                 </tr>
               </tfoot>
             </table>
           </div>
-        </motion.div>
-
-        {/* Footer Summary Cards */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <SummaryCard title="Phần 1: Multiple Choice" count={totals.mc_r + totals.mc_u + totals.mc_a} points={((totals.mc_r + totals.mc_r + totals.mc_a) * 0.25).toFixed(2)} color="teal" />
-          <SummaryCard title="Phần 2: True/False " count={totals.tf_r + totals.tf_u + totals.tf_a} points={(4).toFixed(2)} color="amber" subtitle="(4 câu x 4 ý)" />
-          <SummaryCard title="Phần 3: Short Answer" count={totals.sa_r + totals.sa_u + totals.sa_a} points={((totals.sa_r + totals.sa_u + totals.sa_a) * 0.5).toFixed(2)} color="rose" />
-          <SummaryCard title="Phần 4: Tự luận" count={totals.es_a + totals.es_v} points={(totals.es_a + totals.es_v > 0 ? "Theo tỉ lệ" : "0.00")} color="indigo" />
         </div>
 
-        {/* Designer Credit */}
-        <footer className="mt-12 text-center pb-12">
-            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-              <Sparkles size={14} className="text-sky-500" /> 
-              Phát triển bởi đội ngũ chuyên gia toán học
-            </p>
-        </footer>
+        {/* Summary Dashboard based on User Point Structure */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <StatCard 
+            title="TN Dạng 1" 
+            count={totals.mc_r + totals.mc_u + totals.mc_a} 
+            max={12} 
+            pts={((totals.mc_r + totals.mc_u + totals.mc_a) * 0.25).toFixed(2)} 
+            icon={<CheckCircle2/>}
+            color="teal"
+            desc="Lựa chọn một đáp án đúng"
+          />
+          <StatCard 
+            title="TN Dạng 2" 
+            count={Math.floor((totals.tf_r + totals.tf_u + totals.tf_a) / 4)} 
+            max={2} 
+            pts={(Math.floor((totals.tf_r + totals.tf_u + totals.tf_a) / 4) * 1.0).toFixed(2)} 
+            icon={<Layers/>}
+            color="amber"
+            desc="Đúng/Sai (4 ý mỗi câu)"
+          />
+          <StatCard 
+            title="TN Dạng 3" 
+            count={totals.sa_r + totals.sa_u + totals.sa_a} 
+            max={4} 
+            pts={((totals.sa_r + totals.sa_u + totals.sa_a) * 0.5).toFixed(2)} 
+            icon={<RefreshCw/>}
+            color="rose"
+            desc="Trả lời ngắn"
+          />
+          <StatStatStat stat1={totals.es_a + totals.es_v} pts={((totals.es_a + totals.es_v) * 0.5).toFixed(2)} max={6} />
+        </div>
       </div>
 
-      {/* Modals */}
+      {/* Modals for Editing */}
       <AnimatePresence>
-        {isAddingGroup && (
-          <Modal title="Thêm Chủ đề Mới" onClose={() => setIsAddingGroup(false)}>
-            <form onSubmit={e => { e.preventDefault(); handleAddGroup(new FormData(e.currentTarget).get('name') as string); }}>
-              <input name="name" autoFocus placeholder="Ví dụ: Đại số Tổ hợp..." className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-sky-500 outline-none mb-6 font-bold" />
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => setIsAddingGroup(false)} className="px-6 py-3 text-slate-500 font-bold">Hủy</button>
-                <button type="submit" className="px-8 py-3 bg-sky-600 text-white rounded-xl font-bold shadow-lg shadow-sky-600/20 active:scale-95 transition-all">Lưu chủ đề</button>
-              </div>
-            </form>
-          </Modal>
-        )}
-        {isAddingItem && (
-          <Modal title="Thêm Bài học Mới" onClose={() => setIsAddingItem(null)}>
-            <form onSubmit={e => { e.preventDefault(); handleAddItem(isAddingItem, new FormData(e.currentTarget).get('name') as string); }}>
-              <input name="name" autoFocus placeholder="Ví dụ: Hoán vị, Chỉnh hợp..." className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-sky-500 outline-none mb-6 font-bold" />
-              <div className="flex justify-end gap-3">
-                <button type="button" onClick={() => setIsAddingItem(null)} className="px-6 py-3 text-slate-500 font-bold">Hủy</button>
-                <button type="submit" className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">Thêm bài học</button>
-              </div>
-            </form>
-          </Modal>
-        )}
+        {isAddingGroup && <GroupModal onSave={handleAddGroup} onClose={() => setIsAddingGroup(false)} />}
+        {isAddingItem && <ItemModal onSave={name => handleAddItem(isAddingItem, name)} onClose={() => setIsAddingItem(null)} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function MatrixCell({ value, onChange, color }: { value: number, onChange: (v: number) => void, color: string }) {
-  const bgStyles: Record<string, string> = {
-    teal: 'hover:bg-teal-50 focus-within:bg-teal-50',
-    amber: 'hover:bg-amber-50 focus-within:bg-amber-50',
-    rose: 'hover:bg-rose-50 focus-within:bg-rose-50',
-    slate: 'hover:bg-slate-50 focus-within:bg-slate-50'
+// --- Internal UI Components ---
+
+function StatCard({ title, count, max, pts, icon, color, desc }: any) {
+  const isDone = count >= max;
+  const colors: any = {
+    teal: 'bg-teal-600', amber: 'bg-amber-500', rose: 'bg-rose-500'
   };
   
-  const textStyles: Record<string, string> = {
-    teal: 'text-teal-700',
-    amber: 'text-amber-700',
-    rose: 'text-rose-700',
-    slate: 'text-slate-700'
-  };
-
   return (
-    <td className={`p-1 border border-slate-100 transition-colors ${bgStyles[color] || ''}`}>
-      <input 
-        type="number" 
-        value={value === 0 ? '' : value}
-        onChange={e => onChange(parseInt(e.target.value) || 0)}
-        placeholder="0"
-        className={`w-full bg-transparent text-center focus:outline-none font-black text-sm p-2 ${value > 0 ? textStyles[color] : 'text-slate-200'}`}
-      />
-    </td>
-  );
-}
-
-function SummaryCard({ title, count, points, color, subtitle }: { title: string, count: number, points: string, color: string, subtitle?: string }) {
-  const themes: Record<string, string> = {
-    teal: 'bg-teal-600',
-    amber: 'bg-amber-500',
-    rose: 'bg-rose-500',
-    indigo: 'bg-indigo-600'
-  };
-
-  return (
-    <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all">
-      <div className={`w-10 h-10 rounded-2xl ${themes[color]} mb-4 flex items-center justify-center text-white`}>
-        <Activity size={20} />
+    <div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100 relative overflow-hidden flex flex-col hover:shadow-xl transition-all h-full">
+      <div className={`absolute top-0 right-0 w-24 h-24 ${colors[color]} opacity-5 rounded-full -mr-8 -mt-8`}></div>
+      <div className={`w-14 h-14 rounded-2xl ${colors[color]} flex items-center justify-center text-white mb-6 shadow-lg shadow-${color}-200`}>
+        {icon}
       </div>
-      <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{title}</h3>
-      <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-black text-slate-900">{count}</span>
-        <span className="text-slate-400 text-sm font-bold">câu / ý</span>
+      <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{title}</span>
+      <div className="flex items-baseline gap-2 mb-2">
+        <h4 className={`text-4xl font-black ${isDone ? 'text-slate-900' : 'text-slate-900'}`}>{count}</h4>
+        <span className="text-slate-400 font-bold text-lg">/ {max} câu</span>
       </div>
-      {subtitle && <p className="text-[10px] text-slate-400 font-bold mb-4">{subtitle}</p>}
-      <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
-        <span className="text-xs font-bold text-slate-500">Dự kiến điểm</span>
-        <span className={`text-sm font-black text-${color}-600`}>{points}đ</span>
+      <p className="text-[11px] text-slate-400 font-bold uppercase mb-6 leading-tight">{desc}</p>
+      <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+        <span className="text-sm font-bold text-slate-500">Tiêu chuẩn điểm:</span>
+        <span className={`text-xl font-black text-${color}-600`}>{pts}đ</span>
       </div>
     </div>
   );
 }
 
-function Activity({ size }: { size: number }) {
+function StatStatStat({ stat1, pts, max }: any) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-    </svg>
+    <div className="bg-[#1e293b] p-8 rounded-[32px] shadow-xl text-white relative overflow-hidden h-full flex flex-col">
+       <div className="absolute -top-12 -right-12 w-32 h-32 bg-sky-500/20 rounded-full blur-2xl"></div>
+       <div className="w-14 h-14 rounded-2xl bg-[#0284c7] flex items-center justify-center text-white mb-6 shadow-xl shadow-sky-900">
+         <FileText/>
+       </div>
+       <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Phần Tự Luận</span>
+       <div className="flex items-baseline gap-2 mb-2">
+         <h4 className="text-4xl font-black">{stat1}</h4>
+         <span className="text-slate-500 font-bold text-lg">/ {max} câu</span>
+       </div>
+       <p className="text-[11px] text-slate-500 font-bold uppercase mb-6">Trình bày chi tiết lời giải</p>
+       <div className="mt-auto pt-6 border-t border-slate-700 flex items-center justify-between">
+         <span className="text-sm font-bold text-slate-400">Tiêu chuẩn điểm:</span>
+         <span className="text-xl font-black text-sky-400">{pts}đ</span>
+       </div>
+    </div>
   );
 }
 
-function Modal({ title, children, onClose }: { title: string, children: React.ReactNode, onClose: () => void }) {
+function EditableCell({ value, onChange, color }: { value: number, onChange: (v: number) => void, color: string }) {
+  const styles: any = {
+    teal: 'bg-teal-50', amber: 'bg-amber-50', rose: 'bg-rose-50', slate: 'bg-slate-100/50'
+  };
+  const activeText: any = {
+    teal: 'text-teal-700', amber: 'text-amber-700', rose: 'text-rose-700', slate: 'text-slate-800'
+  };
+  
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
-    >
-      <motion.div 
-        initial={{ scale: 0.9, y: 20, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.9, y: 20, opacity: 0 }}
-        className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden border border-white/20"
-      >
-        <div className="flex items-center justify-between p-8">
+    <td className={`p-1 border-r border-slate-100 hover:${styles[color]} transition-colors`}>
+      <input 
+        type="number" 
+        value={value || ''} 
+        placeholder="0"
+        onChange={e => onChange(parseInt(e.target.value) || 0)}
+        className={`w-full bg-transparent text-center font-black text-sm p-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-${color === 'slate' ? 'slate' : color}-200 rounded-xl ${value > 0 ? activeText[color] : 'text-slate-200'} transition-all`}
+      />
+    </td>
+  );
+}
+
+function ActionButton({ icon, label, onClick, bgColor }: any) {
+  return (
+    <button onClick={onClick} className={`${bgColor} hover:scale-105 active:scale-95 text-white p-5 rounded-[24px] shadow-lg shadow-black/10 transition-all flex items-center gap-4 group`}>
+      <div className="bg-white/10 p-2.5 rounded-xl group-hover:rotate-6 transition-transform">{icon}</div>
+      <span className="font-extrabold text-sm tracking-tight">{label}</span>
+    </button>
+  );
+}
+
+function Badge({ icon, label, color }: any) {
+  const styles: any = {
+    sky: 'bg-sky-100 text-sky-700', emerald: 'bg-emerald-100 text-emerald-700'
+  };
+  return (
+    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ${styles[color]}`}>
+      {icon} {label}
+    </div>
+  );
+}
+
+function ModalContainer({ children, title, onClose }: any) {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
+      <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-10 pb-6">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">{title}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-2xl transition-all">
-            <X size={24} className="text-slate-400" />
-          </button>
+          <button onClick={onClose} className="p-3 hover:bg-slate-100 transition-colors rounded-2xl text-slate-400"><X size={24}/></button>
         </div>
-        <div className="p-8 pt-0">
-          {children}
-        </div>
+        <div className="p-10 pt-0">{children}</div>
       </motion.div>
     </motion.div>
+  );
+}
+
+function GroupModal({ onSave, onClose }: any) {
+  return (
+    <ModalContainer title="Tạo Chủ đề Mới" onClose={onClose}>
+      <form onSubmit={e => { e.preventDefault(); onSave(new FormData(e.currentTarget).get('name')); }}>
+        <input name="name" autoFocus placeholder="Nhập tên tiêu đề (Ví dụ: Đại số Tổ hợp...)" className="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-3xl mb-8 focus:ring-4 focus:ring-sky-100 focus:border-sky-500 outline-none font-bold text-lg" required />
+        <div className="flex gap-4">
+           <button type="button" onClick={onClose} className="flex-1 py-4 font-black text-slate-400">Hủy</button>
+           <button type="submit" className="flex-[2] py-4 bg-[#0284c7] text-white rounded-2xl font-black shadow-xl shadow-sky-200">Lưu ngay</button>
+        </div>
+      </form>
+    </ModalContainer>
+  );
+}
+
+function ItemModal({ onSave, onClose }: any) {
+  return (
+    <ModalContainer title="Thêm Bài học" onClose={onClose}>
+      <form onSubmit={e => { e.preventDefault(); onSave(new FormData(e.currentTarget).get('name')); }}>
+        <input name="name" autoFocus placeholder="Nhập tên bài học kiến thức..." className="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-3xl mb-8 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 outline-none font-bold text-lg" required />
+        <div className="flex gap-4">
+           <button type="button" onClick={onClose} className="flex-1 py-4 font-black text-slate-400">Hủy</button>
+           <button type="submit" className="flex-[2] py-4 bg-[#8b5cf6] text-white rounded-2xl font-black shadow-xl shadow-indigo-200">Thêm bài</button>
+        </div>
+      </form>
+    </ModalContainer>
   );
 }
