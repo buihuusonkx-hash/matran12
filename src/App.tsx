@@ -32,7 +32,7 @@ export default function App() {
 
   // Calculations
   const totals = useMemo(() => {
-    let mc_rec = 0, mc_und = 0;
+    let mc_rec = 0, mc_und = 0, mc_app = 0;
     let tf_rec = 0, tf_und = 0, tf_app = 0;
     let sa_und = 0, sa_app = 0, sa_adv = 0;
     let totalPeriods = 0;
@@ -41,6 +41,7 @@ export default function App() {
       g.items.forEach(i => {
         mc_rec += i.mc_recognition;
         mc_und += i.mc_understanding;
+        mc_app += i.mc_application;
         tf_rec += i.tf_recognition;
         tf_und += i.tf_understanding;
         tf_app += i.tf_application;
@@ -51,10 +52,10 @@ export default function App() {
       });
     });
 
-    const totalQuestions = mc_rec + mc_und + tf_rec + tf_und + tf_app + sa_und + sa_app + sa_adv;
+    const totalQuestions = mc_rec + mc_und + mc_app + tf_rec + tf_und + tf_app + sa_und + sa_app + sa_adv;
     
     return {
-      mc_rec, mc_und,
+      mc_rec, mc_und, mc_app,
       tf_rec, tf_und, tf_app,
       sa_und, sa_app, sa_adv,
       totalQuestions,
@@ -108,7 +109,7 @@ export default function App() {
       id: Math.random().toString(36).substr(2, 9),
       name,
       periods: 1,
-      mc_recognition: 0, mc_understanding: 0,
+      mc_recognition: 0, mc_understanding: 0, mc_application: 0,
       tf_recognition: 0, tf_understanding: 0, tf_application: 0,
       sa_understanding: 0, sa_application: 0, sa_advanced: 0
     };
@@ -125,9 +126,9 @@ export default function App() {
       return;
     }
 
-    // Standard distribution totals
+    // Standard distribution totals (Total 22 questions)
     const distribution = {
-      mc_rec: 8, mc_und: 4,
+      mc_rec: 8, mc_und: 2, mc_app: 2,
       tf_rec: 1, tf_und: 2, tf_app: 1,
       sa_und: 2, sa_app: 3, sa_adv: 1
     };
@@ -143,6 +144,7 @@ export default function App() {
           ...item,
           mc_recognition: Math.round(ratio * distribution.mc_rec),
           mc_understanding: Math.round(ratio * distribution.mc_und),
+          mc_application: Math.round(ratio * distribution.mc_app),
           tf_recognition: Math.round(ratio * distribution.tf_rec),
           tf_understanding: Math.round(ratio * distribution.tf_und),
           tf_application: Math.round(ratio * distribution.tf_app),
@@ -240,25 +242,25 @@ export default function App() {
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-12 font-bold">STT</th>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-16 font-bold uppercase">Số tiết</th>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 min-w-[250px] font-bold uppercase text-[11px]">Nội dung kiến thức, đơn vị kiến thức</th>
-                <th colSpan={8} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 font-bold uppercase text-[11px]">Số câu hỏi theo mức độ nhận thức</th>
+                <th colSpan={9} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 font-bold uppercase text-[11px]">Số câu hỏi theo mức độ nhận thức</th>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tổng số câu</th>
                 <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-20 font-bold uppercase text-[11px]">Tỷ lệ (%)</th>
-                <th rowSpan={3} className="border border-[#cbd5e1] bg-[#e0f2fe] p-2 w-24 font-bold uppercase text-[11px]">Thao tác</th>
               </tr>
               <tr>
-                <th colSpan={2} className="border border-[#cbd5e1] bg-[#f0fdf4] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN</th>
+                <th colSpan={3} className="border border-[#cbd5e1] bg-[#f0fdf4] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN</th>
                 <th colSpan={3} className="border border-[#cbd5e1] bg-[#fefce8] p-2 font-bold uppercase text-[11px]">TRẮC NGHIỆM ĐÚNG/SAI</th>
                 <th colSpan={3} className="border border-[#cbd5e1] bg-[#fff1f2] p-2 font-bold uppercase text-[11px]">TRẢ LỜI NGẮN</th>
               </tr>
               <tr>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[10px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[10px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[10px]">NB</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[10px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[10px]">VD</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[10px]">TH</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[10px]">VD</th>
-                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[10px]">VDC</th>
+                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">NB</th>
+                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">TH</th>
+                <th className="border border-[#cbd5e1] bg-[#f0fdf4] p-1 font-bold text-[#064e3b] text-[11px]">VD</th>
+                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">NB</th>
+                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">TH</th>
+                <th className="border border-[#cbd5e1] bg-[#fefce8] p-1 font-bold text-[#713f12] text-[11px]">VD</th>
+                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">NB</th>
+                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">TH</th>
+                <th className="border border-[#cbd5e1] bg-[#fff1f2] p-1 font-bold text-[#881337] text-[11px]">VD,VDC</th>
               </tr>
             </thead>
             <tbody>
@@ -290,42 +292,17 @@ export default function App() {
                     <td className="border border-[#cbd5e1] p-2 text-left uppercase text-[#0369a1]">
                       {group.name}
                     </td>
-                    <td colSpan={8} className="border border-[#cbd5e1] p-2"></td>
+                    <td colSpan={9} className="border border-[#cbd5e1] p-2"></td>
                     <td className="border border-[#cbd5e1] p-2 text-center">
-                      {group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0)}
+                      {group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.mc_application + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0)}
                     </td>
                     <td className="border border-[#cbd5e1] p-2 text-center">
-                      {((group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0) / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
-                    </td>
-                    <td className="border border-[#cbd5e1] p-2">
-                      <div className="flex justify-center gap-2">
-                        <button 
-                          onClick={() => setIsAddingItem(group.id)}
-                          className="flex items-center gap-1 px-2 py-1 text-xs bg-[#f5f3ff] text-[#8b5cf6] hover:bg-[#ede9fe] rounded transition-colors font-semibold"
-                          title="Thêm bài mới"
-                        >
-                          <Plus size={14} /> Thêm bài mới
-                        </button>
-                        <button 
-                          onClick={() => setEditingGroup(group)}
-                          className="p-1 text-[#0284c7] hover:bg-[#f0f9ff] rounded transition-colors"
-                          title="Sửa tên chương"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteGroup(group.id)}
-                          className="p-1 text-[#ef4444] hover:bg-[#fef2f2] rounded transition-colors"
-                          title="Xóa chương"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                      {((group.items.reduce((acc, i) => acc + i.mc_recognition + i.mc_understanding + i.mc_application + i.tf_recognition + i.tf_understanding + i.tf_application + i.sa_understanding + i.sa_application + i.sa_advanced, 0) / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
                     </td>
                   </tr>
                   {/* Items */}
                   {group.items.map((item, iIdx) => {
-                    const itemTotal = item.mc_recognition + item.mc_understanding + item.tf_recognition + item.tf_understanding + item.tf_application + item.sa_understanding + item.sa_application + item.sa_advanced;
+                    const itemTotal = item.mc_recognition + item.mc_understanding + item.mc_application + item.tf_recognition + item.tf_understanding + item.tf_application + item.sa_understanding + item.sa_application + item.sa_advanced;
                     return (
                       <tr key={item.id} className="hover:bg-[#f1f5f9] transition-colors">
                         <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">{gIdx + 1}.{iIdx + 1}</td>
@@ -357,6 +334,15 @@ export default function App() {
                             min="0"
                             value={item.mc_understanding}
                             onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_understanding', parseInt(e.target.value) || 0)}
+                            className="w-full bg-transparent text-center focus:outline-none font-semibold"
+                          />
+                        </td>
+                        <td className="border border-[#cbd5e1] p-1 bg-[#f0fdf4]">
+                          <input 
+                            type="number" 
+                            min="0"
+                            value={item.mc_application}
+                            onChange={(e) => handleUpdateItem(group.id, item.id, 'mc_application', parseInt(e.target.value) || 0)}
                             className="w-full bg-transparent text-center focus:outline-none font-semibold"
                           />
                         </td>
@@ -422,22 +408,6 @@ export default function App() {
                         <td className="border border-[#cbd5e1] p-2 text-center text-[#64748b]">
                           {((itemTotal / (totals.totalQuestions || 1)) * 100).toFixed(1)}%
                         </td>
-                        <td className="border border-[#cbd5e1] p-2">
-                          <div className="flex justify-center gap-2">
-                            <button 
-                              onClick={() => setEditingItem({groupId: group.id, item})}
-                              className="p-1 text-[#0284c7] hover:bg-[#f0f9ff] rounded transition-colors"
-                            >
-                              <Edit2 size={14} />
-                            </button>
-                            <button 
-                              onClick={() => handleDeleteItem(group.id, item.id)}
-                              className="p-1 text-[#ef4444] hover:bg-[#fef2f2] rounded transition-colors"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </td>
                       </tr>
                     );
                   })}
@@ -451,6 +421,7 @@ export default function App() {
                 <td className="border border-[#cbd5e1] p-3 text-right uppercase">Tổng cộng</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_rec}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_und}</td>
+                <td className="border border-[#cbd5e1] p-2 text-center bg-[#dcfce7]">{totals.mc_app}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_rec}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_und}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#fef9c3]">{totals.tf_app}</td>
@@ -459,7 +430,6 @@ export default function App() {
                 <td className="border border-[#cbd5e1] p-2 text-center bg-[#fee2e2]">{totals.sa_adv}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center text-[#0284c7] text-lg">{totals.totalQuestions}</td>
                 <td className="border border-[#cbd5e1] p-2 text-center">100%</td>
-                <td className="border border-[#cbd5e1] p-2"></td>
               </tr>
             </tfoot>
           </table>

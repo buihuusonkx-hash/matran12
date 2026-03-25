@@ -15,9 +15,10 @@ export interface MatrixItem {
   id: string;
   name: string;
   periods: number;
-  // Part I: Multiple Choice (Recognition, Understanding)
+  // Part I: Multiple Choice (Recognition, Understanding, Application)
   mc_recognition: number;
   mc_understanding: number;
+  mc_application: number;
   // Part II: True/False (Recognition, Understanding, Application)
   tf_recognition: number;
   tf_understanding: number;
