@@ -346,11 +346,19 @@ export default function App() {
         </div>
       </div>
 
-      {/* Modals for Editing */}
-      <AnimatePresence>
-        {isAddingGroup && <GroupModal onSave={handleAddGroup} onClose={() => setIsAddingGroup(false)} />}
-        {isAddingItem && <ItemModal onSave={name => handleAddItem(isAddingItem, name)} onClose={() => setIsAddingItem(null)} />}
-      </AnimatePresence>
+        {/* Designer Credit */}
+        <footer className="mt-12 text-center pb-12">
+            <p className="text-slate-400 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2">
+              <Sparkles size={14} className="text-sky-500" /> 
+              Thiết kế bởi: <span className="text-slate-900 font-extrabold">Bùi Thị Kiên</span> - Trường THPT Kim Thành II
+            </p>
+        </footer>
+
+        {/* Modals for Editing */}
+        <AnimatePresence>
+          {isAddingGroup && <GroupModal onSave={handleAddGroup} onClose={() => setIsAddingGroup(false)} />}
+          {isAddingItem && <ItemModal onSave={name => handleAddItem(isAddingItem, name)} onClose={() => setIsAddingItem(null)} />}
+        </AnimatePresence>
     </div>
   );
 }
