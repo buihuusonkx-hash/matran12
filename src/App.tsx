@@ -24,63 +24,16 @@ import { MatrixData, MatrixGroup, MatrixItem } from './types';
 
 // Grade 10 Initial Data from Image
 const GRADE_10_INITIAL: MatrixGroup[] = [
-  {
-    id: 'g1',
-    name: 'Đại số tổ hợp',
-    items: [
-      { id: '1.1', name: 'Quy tắc cộng. Quy tắc nhân. Sơ đồ hình cây', periods: 3, mc_rec: 1, mc_und: 1, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '1.2', name: 'Hoán vị, chỉnh hợp, tổ hợp', periods: 4, mc_rec: 1, mc_und: 1, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '1.3', name: 'Nhị thức Newton', periods: 2, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-    ]
-  },
-  {
-    id: 'g2',
-    name: 'Một số yếu tố thống kê và xác suất',
-    items: [
-      { id: '2.1', name: 'Số gần đúng. Sai số', periods: 2, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '2.2', name: 'Các số đặc trưng đo xu thế trung tâm', periods: 3, mc_rec: 1, mc_und: 1, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-    ]
-  },
-  {
-    id: 'g3',
-    name: 'Phương pháp tọa độ trong mặt phẳng',
-    items: [
-      { id: '3.1', name: 'Tọa độ của vector', periods: 3, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '3.2', name: 'Biểu thức tọa độ của các phép toán', periods: 2, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 0, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '3.3', name: 'Phương trình đường thẳng', periods: 3, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '3.4', name: 'Vị trí tương đối và góc. Khoảng cách', periods: 2, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 0, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '3.5', name: 'Phương trình đường tròn', periods: 3, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-    ]
-  }
+  { id: 'g1', name: 'Đại số tổ hợp', items: [] },
+  { id: 'g2', name: 'Một số yếu tố thống kê và xác suất', items: [] },
+  { id: 'g3', name: 'Phương pháp tọa độ trong mặt phẳng', items: [] }
 ];
 
 // Grade 11 Initial Data
 const GRADE_11_INITIAL: MatrixGroup[] = [
-  {
-    id: 'g11-1',
-    name: 'Hàm số mũ và hàm số lôgarit',
-    items: [
-      { id: '11.1', name: 'Phép tính lũy thừa và logarit', periods: 3, mc_rec: 1, mc_und: 1, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '11.2', name: 'Hàm số mũ và logarit', periods: 4, mc_rec: 1, mc_und: 1, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '11.3', name: 'Phương trình, bất phương trình mũ và logarit', periods: 3, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-    ]
-  },
-  {
-    id: 'g11-2',
-    name: 'Quan hệ vuông góc trong không gian',
-    items: [
-      { id: '11.4', name: 'Đường thẳng và mặt phẳng vuông góc', periods: 4, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '11.5', name: 'Hai mặt phẳng vuông góc', periods: 4, mc_rec: 1, mc_und: 1, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-      { id: '11.6', name: 'Khoảng cách trong không gian', periods: 3, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 1, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-    ]
-  },
-  {
-    id: 'g11-3',
-    name: 'Xác suất có điều kiện và các quy tắc xác suất',
-    items: [
-      { id: '11.7', name: 'Biến cố độc lập và quy tắc nhân', periods: 2, mc_rec: 1, mc_und: 0, mc_app: 0, tf_rec: 1, tf_und: 0, tf_app: 0, sa_rec: 1, sa_und: 0, sa_app: 0, essay_app: 0, essay_adv: 0 },
-    ]
-  }
+  { id: 'g11-1', name: 'Hàm số mũ và hàm số lôgarit', items: [] },
+  { id: 'g11-2', name: 'Quan hệ vuông góc trong không gian', items: [] },
+  { id: 'g11-3', name: 'Xác suất có điều kiện và các quy tắc xác suất', items: [] }
 ];
 
 export default function App() {
@@ -88,7 +41,7 @@ export default function App() {
   const [data, setData] = useState<MatrixData>({
     grade: 10,
     semester: 'II',
-    examType: 'Giữa Học Kỳ II',
+    examType: '',
     groups: GRADE_10_INITIAL
   });
   
@@ -211,7 +164,7 @@ export default function App() {
                 <BookOpen size={20} fill="currentColor" />
              </div>
              <h1 className="text-2xl md:text-3xl font-black text-[#0f172a] uppercase tracking-tight">
-               Ma Trận Toán 10, 11 - Giữa Học Kỳ II
+               Ma Trận Toán 10, 11
              </h1>
           </div>
           
@@ -270,7 +223,7 @@ export default function App() {
               <thead>
                 <tr className="text-[11px] font-black text-slate-500 uppercase">
                   <th rowSpan={2} className="p-6 border-b border-r border-slate-100 bg-slate-50/50 min-w-[320px] text-left">Nội dung kiến thức / Bài học</th>
-                  <th colSpan={3} className="p-3 border-b border-r border-teal-100 bg-teal-50 text-teal-800">TN Dạng 1 (NLC)</th>
+                  <th colSpan={2} className="p-3 border-b border-r border-teal-100 bg-teal-50 text-teal-800">TN Dạng 1 (NLC)</th>
                   <th colSpan={3} className="p-3 border-b border-r border-amber-100 bg-amber-50 text-amber-800">TN Dạng 2 (Đ-S)</th>
                   <th colSpan={3} className="p-3 border-b border-r border-rose-100 bg-rose-50 text-rose-800">TN Dạng 3 (TLN)</th>
                   <th colSpan={2} className="p-3 border-b border-r border-[#f1f5f9] bg-slate-100 text-slate-800">Tự luận (TL)</th>
@@ -278,7 +231,7 @@ export default function App() {
                   <th rowSpan={2} className="p-3 border-b border-slate-100 bg-slate-50"></th>
                 </tr>
                 <tr className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                  <th className="p-2 border-r border-teal-50 bg-teal-50/30">Biết</th><th className="p-2 border-r border-teal-50 bg-teal-50/30">Hiểu</th><th className="p-2 border-r border-teal-100 bg-teal-50/30">VD</th>
+                  <th className="p-2 border-r border-teal-50 bg-teal-50/30">Biết</th><th className="p-2 border-r border-teal-100 bg-teal-50/30">Hiểu</th>
                   <th className="p-2 border-r border-amber-50 bg-amber-50/30">Biết</th><th className="p-2 border-r border-amber-50 bg-amber-50/30">Hiểu</th><th className="p-2 border-r border-amber-100 bg-amber-50/30">VD</th>
                   <th className="p-2 border-r border-rose-50 bg-rose-50/30">Biết</th><th className="p-2 border-r border-rose-50 bg-rose-50/30">Hiểu</th><th className="p-2 border-r border-rose-100 bg-rose-50/30">VD</th>
                   <th className="p-2 border-r border-slate-200 bg-slate-100/30 text-slate-500">VD</th><th className="p-2 border-r border-slate-200 bg-slate-100/30 text-slate-500">VDC</th>
@@ -311,7 +264,6 @@ export default function App() {
                           </td>
                           <EditableCell value={item.mc_rec} onChange={v => handleUpdateItem(group.id, item.id, 'mc_rec', v)} color="teal" />
                           <EditableCell value={item.mc_und} onChange={v => handleUpdateItem(group.id, item.id, 'mc_und', v)} color="teal" />
-                          <EditableCell value={item.mc_app} onChange={v => handleUpdateItem(group.id, item.id, 'mc_app', v)} color="teal" />
                           
                           <EditableCell value={item.tf_rec} onChange={v => handleUpdateItem(group.id, item.id, 'tf_rec', v)} color="amber" />
                           <EditableCell value={item.tf_und} onChange={v => handleUpdateItem(group.id, item.id, 'tf_und', v)} color="amber" />
@@ -339,7 +291,7 @@ export default function App() {
               <tfoot>
                 <tr className="bg-slate-900 border-t-2 border-slate-800 text-white font-heavy">
                   <td className="p-6 text-right text-xs font-black uppercase tracking-[3px] text-slate-400">TỔNG SỐ CÂU / Ý</td>
-                  <td colSpan={3} className="p-3 bg-teal-900/40 text-center font-black text-base">{totals.mc_r + totals.mc_u + totals.mc_a}</td>
+                  <td colSpan={2} className="p-3 bg-teal-900/40 text-center font-black text-base">{totals.mc_r + totals.mc_u + totals.mc_a}</td>
                   <td colSpan={3} className="p-3 bg-amber-900/40 text-center font-black text-base">{totals.tf_r + totals.tf_u + totals.tf_a}</td>
                   <td colSpan={3} className="p-3 bg-rose-900/40 text-center font-black text-base">{totals.sa_r + totals.sa_u + totals.sa_a}</td>
                   <td colSpan={2} className="p-3 bg-slate-800 text-center font-black text-base">{totals.es_a + totals.es_v}</td>
