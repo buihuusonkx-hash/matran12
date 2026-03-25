@@ -451,12 +451,15 @@ export default function App() {
               <p className="text-sm text-[#64748b]">Điểm: <span className="font-bold text-[#1e293b]">{((totals.sa_und + totals.sa_app + totals.sa_adv) * 0.5).toFixed(2)}</span></p>
             </div>
           </div>
+        </div>
         <div className="p-4 bg-white border-t border-[#cbd5e1] text-center">
           <p className="text-[#64748b] text-sm">
             App được thiết kế bởi <span className="text-[#0284c7] font-bold">Bùi Thị Kiên</span>
           </p>
         </div>
       </div>
+
+
 
 
       {/* Modals */}
