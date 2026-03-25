@@ -23,18 +23,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MatrixData, MatrixGroup, MatrixItem } from './types';
 
 // Grade 10 Initial Data from Image
-const GRADE_10_INITIAL: MatrixGroup[] = [
-  { id: 'g1', name: 'Đại số tổ hợp', items: [] },
-  { id: 'g2', name: 'Một số yếu tố thống kê và xác suất', items: [] },
-  { id: 'g3', name: 'Phương pháp tọa độ trong mặt phẳng', items: [] }
-];
-
-// Grade 11 Initial Data
-const GRADE_11_INITIAL: MatrixGroup[] = [
-  { id: 'g11-1', name: 'Hàm số mũ và hàm số lôgarit', items: [] },
-  { id: 'g11-2', name: 'Quan hệ vuông góc trong không gian', items: [] },
-  { id: 'g11-3', name: 'Xác suất có điều kiện và các quy tắc xác suất', items: [] }
-];
+const GRADE_10_INITIAL: MatrixGroup[] = [];
+const GRADE_11_INITIAL: MatrixGroup[] = [];
 
 export default function App() {
   const [grade, setGrade] = useState<number>(10);
@@ -238,7 +228,27 @@ export default function App() {
                 </tr>
               </thead>
               <tbody>
-                {data.groups.map((group, gIdx) => (
+                {data.groups.length === 0 ? (
+                  <tr>
+                    <td colSpan={14} className="p-32 text-center text-slate-400">
+                      <div className="flex flex-col items-center gap-6">
+                        <div className="p-6 bg-slate-100 rounded-[32px] text-slate-300">
+                           <Layers size={48} />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xl font-black text-slate-900">Ma trận đang trống</p>
+                          <p className="text-sm font-bold text-slate-400">Bắt đầu bằng cách thêm Chủ đề hoặc Bài học mới.</p>
+                        </div>
+                        <button 
+                          onClick={() => setIsAddingGroup(true)}
+                          className="px-8 py-3 bg-[#0284c7] text-white rounded-2xl font-black shadow-xl shadow-sky-200 hover:scale-105 active:scale-95 transition-all"
+                        >
+                          Tạo chủ đề đầu tiên
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : data.groups.map((group, gIdx) => (
                   <React.Fragment key={group.id}>
                     <tr className="bg-slate-50/40 group">
                       <td colSpan={14} className="p-4 border-b border-slate-100">
